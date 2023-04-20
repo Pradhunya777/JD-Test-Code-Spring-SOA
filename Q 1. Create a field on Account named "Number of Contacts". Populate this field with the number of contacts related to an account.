@@ -1,0 +1,27 @@
+//Create a field on Account named "Number of Contacts". Populate this field with the number of contacts related to an account. 
+
+//To create a field on Account named "Number of Contacts" and populate it with the number of contacts related to an account, we can follow these steps:
+
+Go to Setup > Object Manager > Account > Fields & Relationships.
+
+Click the "New" button to create a new field.
+
+Select "Number" as the data type and click "Next".
+
+Enter "Number of Contacts" as the field label and "Number_of_Contacts__c" as the field name. we can leave the other fields as their default values and click "Next".
+
+In the "Set Field-Level Security" page, select the appropriate security settings for the field and click "Next".
+
+In the "Add to Page Layouts" page, add the field to the appropriate page layouts and click "Save".
+
+To populate the field with the number of contacts related to an account, we can use a formula field. Go to Setup > Object Manager > Account > Fields & Relationships and click the "New" button to create a new field.
+
+Select "Formula" as the data type and click "Next".
+
+Enter "Number_of_Contacts__c" as the field label and "Number_of_Contacts__c" as the field name. we can leave the other fields as their default values and click "Next".
+
+In the formula editor, enter the following formula: "SIZE(Contacts)" and click "Next".
+
+In the "Set Field-Level Security" page, select the appropriate security settings for the field and click "Next".
+
+In the "Add to Page Layouts" page, add the field to the appropriate page layouts and click "Save".
