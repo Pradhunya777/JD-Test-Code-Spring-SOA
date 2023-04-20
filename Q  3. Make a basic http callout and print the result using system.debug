@@ -1,0 +1,20 @@
+//HTTP callout and printing the result using system.debug
+
+public class HttpCallout {
+    public static void makeCallout() {
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://www.example.com');
+        request.setMethod('GET');
+        HttpResponse response = http.send(request);
+        System.debug('Response Body: ' + response.getBody());
+    }
+}
+
+
+//In the Developer Console, go to Debug > Open Execute Anonymous Window.
+//Enter the following code in the window and click "Execute":
+
+HttpCallout.makeCallout();
+
+
