@@ -1,0 +1,27 @@
+// After custom field has been created, we can use Apex code to populate it with the number of contacts related to an account.
+
+trigger UpdateNumContacts on Contact (after insert, after update, after delete, after undelete) {
+    Set<Id> accountIds = new Set<Id>();
+    if(Trigger.isInsert || Trigger.isUndelete) {
+        for(Contact c : Trigger.new) {
+            accountIds.add(c.AccountId);
+        }
+    }
+    if(Trigger.isUpdate || Trigger.isDelete) {
+        for(Contact c : Trigger.old) {
+            accountIds.add(c.AccountId);
+        }
+    }
+    List<Account> accountsToUpdate = new List<Account>();
+    for(AggregateResult ar : [SELECT AccountId, COUNT(Id) numContacts FROM Contact WHERE AccountId IN :accountIds GROUP BY AccountId]) {
+        Account a = new Account(Id = (Id) ar.get('AccountId'), Number_of_Contacts__c = (Integer) ar.get('numContacts'));
+        accountsToUpdate.add(a);
+    }
+    update accountsToUpdate;
+}
+
+
+
+This trigger will fire whenever a Contact is inserted, updated, deleted, or undeleted. It will gather a set of all the AccountIds related to those Contacts, 
+then run a SOQL query to count the number of Contacts related to each Account. Finally, it will update the Number_of_Contacts__c field on the affected Accounts 
+with the appropriate value.
