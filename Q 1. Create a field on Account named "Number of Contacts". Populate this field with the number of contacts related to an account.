@@ -1,27 +1,27 @@
-//Create a field on Account named "Number of Contacts". Populate this field with the number of contacts related to an account. 
+// After custom field has been created, we can use Apex code to populate it with the number of contacts related to an account.
 
-//To create a field on Account named "Number of Contacts" and populate it with the number of contacts related to an account, we can follow these steps:
+trigger UpdateNumContacts on Contact (after insert, after update, after delete, after undelete) {
+    Set<Id> accountIds = new Set<Id>();
+    if(Trigger.isInsert || Trigger.isUndelete) {
+        for(Contact c : Trigger.new) {
+            accountIds.add(c.AccountId);
+        }
+    }
+    if(Trigger.isUpdate || Trigger.isDelete) {
+        for(Contact c : Trigger.old) {
+            accountIds.add(c.AccountId);
+        }
+    }
+    List<Account> accountsToUpdate = new List<Account>();
+    for(AggregateResult ar : [SELECT AccountId, COUNT(Id) numContacts FROM Contact WHERE AccountId IN :accountIds GROUP BY AccountId]) {
+        Account a = new Account(Id = (Id) ar.get('AccountId'), Number_of_Contacts__c = (Integer) ar.get('numContacts'));
+        accountsToUpdate.add(a);
+    }
+    update accountsToUpdate;
+}
 
-Go to Setup > Object Manager > Account > Fields & Relationships.
 
-Click the "New" button to create a new field.
 
-Select "Number" as the data type and click "Next".
-
-Enter "Number of Contacts" as the field label and "Number_of_Contacts__c" as the field name. we can leave the other fields as their default values and click "Next".
-
-In the "Set Field-Level Security" page, select the appropriate security settings for the field and click "Next".
-
-In the "Add to Page Layouts" page, add the field to the appropriate page layouts and click "Save".
-
-To populate the field with the number of contacts related to an account, we can use a formula field. Go to Setup > Object Manager > Account > Fields & Relationships and click the "New" button to create a new field.
-
-Select "Formula" as the data type and click "Next".
-
-Enter "Number_of_Contacts__c" as the field label and "Number_of_Contacts__c" as the field name. we can leave the other fields as their default values and click "Next".
-
-In the formula editor, enter the following formula: "SIZE(Contacts)" and click "Next".
-
-In the "Set Field-Level Security" page, select the appropriate security settings for the field and click "Next".
-
-In the "Add to Page Layouts" page, add the field to the appropriate page layouts and click "Save".
+This trigger will fire whenever a Contact is inserted, updated, deleted, or undeleted. It will gather a set of all the AccountIds related to those Contacts, 
+then run a SOQL query to count the number of Contacts related to each Account. Finally, it will update the Number_of_Contacts__c field on the affected Accounts 
+with the appropriate value.
